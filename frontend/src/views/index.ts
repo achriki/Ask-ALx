@@ -1,0 +1,7 @@
+export {default as Feed} from './Feed'
+export {default as Question} from './Question'
+export {default as Profile} from './Profile'
+export {default as Tags} from './Tags'
+export {default as Users} from './Users'
+export {default as Settings} from './Settings'
+export {default as Saves} from './Saves'
