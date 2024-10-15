@@ -46,6 +46,8 @@ function Question() {
         }else{
             const payload = {
                 publisherId: user?.id,
+                username: user?.username,
+                userImage:user?.imageUrl,
                 title: questionTitle,
                 content: model,
                 likeCount: 0,

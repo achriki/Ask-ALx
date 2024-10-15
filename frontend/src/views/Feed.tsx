@@ -1,12 +1,15 @@
 import React,{useEffect, useState} from 'react'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
-import { SignIn, QuestionForm } from '../components'
+import { SignIn, QuestionForm, QuestionCard } from '../components'
 import axios from 'axios'
 import { useToast } from '@chakra-ui/react'
+import { useUser } from "@clerk/clerk-react";
+import QuestionType from '../utils/Tquestion';
 
 function Feed() {
   const toast = useToast()
   const endpoint_url = process.env.REACT_APP_ENDPOINT_URL
+  const [questions, setQuestion] = useState<Array<QuestionType>>([])
 
   useEffect(()=>{
 
@@ -14,7 +17,7 @@ function Feed() {
       try{
         const request = await axios.get(`${endpoint_url}/questions`)
         if(request.status === 200){
-          console.log(request.data.questions)
+          setQuestion(request.data.questions)
         }
       }catch(err){
         toast({
@@ -39,9 +42,15 @@ function Feed() {
         <div className=" w-1/4 flex flex-col scroll navBar" style={{border: "1px solid red"}}>
           Navigation bar
         </div>
-        <div className="w-3/4 flex flex-col scroll questionsSection" style={{border: "1px solid red"}}>
-          <div className="qForm">
-            <QuestionForm />  
+        <div className="w-3/4 flex flex-col scroll questionsSection justify-start items-stretch" style={{border: "1px solid red"}}>
+          <div className="qForm flex flex-col justify-start items-center ">
+            <QuestionForm />
+            {
+              questions && questions.map((q)=>(
+                  <QuestionCard question={q} />
+                )
+              )
+            }
           </div>
         </div>
         <div className="w-1/4 flex flex-col scroll questionsSection" style={{border: "1px solid red"}}>
