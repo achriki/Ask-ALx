@@ -8,11 +8,11 @@ function QuestionForm() {
         navigate("/newQuestion")
     }
   return (
-    <div className='container'>
-        <div className="heed">
-            <h1>Top Questions</h1>
+    <div className='flex justify-center items-center container pb-2' style={{borderBottom: '.5px solid #000' }}>
+        <div className="heed w-full">
+            <h1 className='press-start-2p-regular '>Top Questions</h1>
         </div>
-        <div className="btnContainer">
+        <div className="btnContainer w-full">
             <SignedIn>
                 <button onClick={handleAskQuestion} className='signInBtn' >
                     Ask Question
