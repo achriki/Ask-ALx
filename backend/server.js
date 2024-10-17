@@ -2,34 +2,37 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const port = process.env.PORT || 8080;
-const { ConvexHttpClient } = require('convex/browser');
-const { log } = require('console');
 const dotenv = require('dotenv');
+// import messages from './utils/auth';
 dotenv.config();
+
+const port = process.env.PORT || 8080;
+import routerController from './routes';
+import questionController from "./controllers/questionsController"
 
 // set up express server middlewares
 const app = express();
-const corsOption = {
+const corsOptions = {
     origin: ['http://localhost:3000'],
     credentials: true
 }
 
 app.use(bodyParser.urlencoded({extended: true, limit:'50mb'}));
-app.use(cors(corsOption));
-
-//console authentication query
-console.log("env variable: ", process.env.CONVEX_URL)
-const client = new ConvexHttpClient(process.env.CONVEX_URL);
-const getAuthToken = async ()=>{
-    try{
-        const result = await client.query("authentication");
-        console.log(result);
-    }catch(err){
-        console.log(err)
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use((req, res, next) => {
+    // Set CORS headers to allow requests from any origin
+    res.header('Access-Control-Allow-Origin', '*');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(200);
+    } else {
+      next();
     }
-}
-getAuthToken()
+});
+//set router controller
+routerController(app);
 
 
 //start the http server

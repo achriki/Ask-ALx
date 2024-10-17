@@ -2,10 +2,14 @@
   "name": "ask_alx_backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
+  "scripts": {
+    "start-server": "nodemon --exec babel-node --presets @babel/preset-env ./server.js"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^5.0.49",
     "body-parser": "^1.20.3",
     "convex": "^1.16.3",
     "cors": "^2.8.5",
@@ -15,11 +19,18 @@
     "redis": "^2.8.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.25.7",
+    "@babel/core": "^7.25.8",
+    "@babel/node": "^7.25.7",
+    "@babel/preset-env": "^7.25.8",
+    "@babel/register": "^7.25.7",
+    "@clerk/backend": "^1.13.9",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^6.2.2",
-    "nodemon": "^2.0.2",
+    "nodemon": "^2.0.22",
     "request": "^2.88.0",
-    "sinon": "^7.5.0"
+    "sinon": "^7.5.0",
+    "svix": "^1.37.0"
   }
 }
