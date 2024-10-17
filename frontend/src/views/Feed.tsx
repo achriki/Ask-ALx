@@ -1,9 +1,9 @@
 import React,{useEffect, useState} from 'react'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
-import { SignIn, QuestionForm, QuestionCard } from '../components'
+import { SignIn, QuestionForm, QuestionCard, NavBar, EventsBar } from '../components'
 import axios from 'axios'
 import { useToast } from '@chakra-ui/react'
-import { useUser } from "@clerk/clerk-react";
+import { useQuery } from 'convex/react';
 import QuestionType from '../utils/Tquestion';
 
 function Feed() {
@@ -12,7 +12,6 @@ function Feed() {
   const [questions, setQuestion] = useState<Array<QuestionType>>([])
 
   useEffect(()=>{
-
     const getQuestions = async ()=>{
       try{
         const request = await axios.get(`${endpoint_url}/questions`)
@@ -21,28 +20,27 @@ function Feed() {
         }
       }catch(err){
         toast({
-          title: 'Alert ',
+          title: 'Alert',
           description: "No questions found",
           status: 'error',
           duration: 9000,
           isClosable: true,
         })
       }
-      
     }
     getQuestions()
     
   },[])
   return (
     <div className='w-full'>
-      <div className="headerSection">
+      <div className="headerSection bg-white">
         <SignIn />
       </div>
-      <div className="flex h-screen">
-        <div className=" w-1/4 flex flex-col scroll navBar" style={{border: "1px solid red"}}>
-          Navigation bar
+      <div className="flex h-screen mt-4">
+        <div className=" w-64 flex flex-col scroll navBar" >
+          <NavBar />
         </div>
-        <div className="w-3/4 flex flex-col scroll questionsSection justify-start items-stretch" style={{border: "1px solid red"}}>
+        <div className="w-3/4 flex flex-col scroll questionsSection justify-start items-stretch" >
           <div className="qForm flex flex-col justify-start items-center ">
             <QuestionForm />
             {
@@ -53,8 +51,8 @@ function Feed() {
             }
           </div>
         </div>
-        <div className="w-1/4 flex flex-col scroll questionsSection" style={{border: "1px solid red"}}>
-          Alx Events
+        <div className="w-1/4 mr-4 flex flex-col scroll questionsSection">
+          <EventsBar />
         </div>
       </div>      
     </div>

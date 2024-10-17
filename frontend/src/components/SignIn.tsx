@@ -1,8 +1,8 @@
 import React from 'react'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react'
-import { Input, InputRightElement, InputGroup } from '@chakra-ui/react'
+import { Input, InputRightElement, InputGroup, Box } from '@chakra-ui/react'
 import {Search2Icon} from '@chakra-ui/icons'
-import Logo from '../images/ask_alx_logo_100.png'
+import Logo from '../images/ask_alx_logo_60.png'
 import { useNavigate } from 'react-router-dom'
 
 function SignIn() {
@@ -10,12 +10,16 @@ function SignIn() {
     const handleNavigation = ()=>{
         navigate("/")
     }
+
+    const handleAskQuestion = ()=>{
+        navigate("/newQuestion")
+    }
   return (
     <header>
-        <div className="logo">
+        <Box className="logo">
             <img style={{cursor: 'pointer'}} onClick={handleNavigation} src={Logo} alt="app_logo_100px" />
-        </div>
-        <div className="searchBar">
+        </Box>
+        <Box className="searchBar">
             <InputGroup>
                 <Input
                     style={{
@@ -33,9 +37,17 @@ function SignIn() {
                     <Search2Icon color='#2929290' />
                 </InputRightElement>
             </InputGroup>
-        </div>
+        </Box>
         
-        <div className="signI">
+        <Box className="signI flex justify-center item-center" >
+            <Box mr={8}>
+                <SignedIn>
+                    <button onClick={handleAskQuestion} className='signInBtn' >
+                        Ask Question
+                    </button>
+                </SignedIn>
+            </Box>
+                
             <SignedOut>
                 <SignInButton>
                     <button className='signInBtn'>
@@ -46,7 +58,7 @@ function SignIn() {
             <SignedIn>
                 <UserButton></UserButton>
             </SignedIn>
-        </div>
+        </Box>
     </header>
   )
 }
