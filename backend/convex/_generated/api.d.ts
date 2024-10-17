@@ -15,7 +15,11 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as functions_authentication from "../functions/authentication.js";
+import type * as comments from "../comments.js";
+import type * as http from "../http.js";
+import type * as questions from "../questions.js";
+import type * as tags from "../tags.js";
+import type * as users from "../users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,7 +30,11 @@ import type * as functions_authentication from "../functions/authentication.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "functions/authentication": typeof functions_authentication;
+  comments: typeof comments;
+  http: typeof http;
+  questions: typeof questions;
+  tags: typeof tags;
+  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
