@@ -8,7 +8,7 @@ function QuestionForm() {
         navigate("/newQuestion")
     }
   return (
-    <div className='flex justify-center items-center container pb-2' style={{borderBottom: '.5px solid #000' }}>
+    <div className='flex justify-center items-center container pb-2' >
         <div className="heed w-full">
             <h1 className='press-start-2p-regular '>Top Questions</h1>
         </div>

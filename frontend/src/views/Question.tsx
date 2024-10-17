@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react'
-import Logo from '../images/ask_alx_logo_100.png'
+import Logo from '../images/ask_alx_logo_60.png'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from "@clerk/clerk-react";
 
@@ -13,21 +13,43 @@ import {  Tabs, TabList, TabPanels, Tab, TabPanel, Text, Box, Tag, TagLabel, Tag
 import { QuestionHeader, TextEditor } from '../components'
 import FroalaEditorView from 'react-froala-wysiwyg/FroalaEditorView'
 import axios from 'axios'
+import TagsType from '../utils/Ttags';
 
 function Question() {
     const {user} = useUser()
     const toast = useToast()
     const endpoint_url = process.env.REACT_APP_ENDPOINT_URL
+    const [tags, setTags] = useState<Array<string>>([])
+    const [searchTags, setSearchTags] = useState<Array<TagsType>>([])
+    const [questionTitle, setQuestionTitle] = useState<string>('')
+    const [model, setModel] = useState<string>('');
+    const [errorAlert, setErrorAlert] = useState<boolean>(false);
     // console.log("endpoint url: ", endpoint_url)
     const navigate = useNavigate()
     const handleNavigation = ()=>{
         navigate("/")
     }
-    const [tags, setTags] = useState<Array<string>>([])
-    const [questionTitle, setQuestionTitle] = useState<string>('')
-    const [model, setModel] = useState<string>('');
-    const [errorAlert, setErrorAlert] = useState<boolean>(false);
-
+    
+    useEffect(()=>{
+        const getTags = async ()=>{
+          try{
+            const request = await axios.get(`${endpoint_url}/tags`)
+            if(request.status === 200){
+              setSearchTags(request.data.tags)
+            }
+          }catch(err){
+            toast({
+              title: 'Alert',
+              description: "No questions found",
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            })
+          }
+        }
+    
+        getTags()
+    },[])
     const handleTitle = (title:string)=>{
         setQuestionTitle(title)
     }
@@ -94,7 +116,7 @@ function Question() {
         <div className='min-h-screen w-full'>
             <div className="header flex items-center justify-start">
                 <div className="logo flex items-center justify-center ">
-                    <img style={{cursor: 'pointer'}} onClick={handleNavigation} src={Logo} alt="app_logo_100px" />
+                    <img style={{cursor: 'pointer'}} onClick={handleNavigation} src={Logo} alt="app_logo_60_px" />
                     <h1 className='.press-start-2p-regular'>Create Question</h1>
                 </div>
             </div>
@@ -114,7 +136,7 @@ function Question() {
                             className='w-3/4 h-full ml-16 mt-5 shadow-md rounder-md' 
                             bgColor='white'
                         >
-                            <QuestionHeader qHandler={handleTitle} tags={tags} questionTitle={questionTitle} setTags={setTags} />
+                            <QuestionHeader qHandler={handleTitle} tags={tags} questionTitle={questionTitle} setTags={setTags} searchTags={searchTags} />
                             <TextEditor setModelContent={setModel} />
                         </TabPanel>
                         <TabPanel

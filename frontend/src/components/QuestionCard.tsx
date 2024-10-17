@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 import { Box, Text, Avatar, HStack, Tag, TagLabel, Icon, Button } from '@chakra-ui/react';
 import { FaHeart, FaRegCommentDots, FaHeartBroken } from 'react-icons/fa';
 import { FiBookmark } from 'react-icons/fi';
@@ -10,9 +11,17 @@ type cardProps= {
 }
 function QuestionCard(props:cardProps) {
     const { user } = useUser()
+    const navigate = useNavigate()
     const convertDate = ()=>{
         const date = new Date(parseFloat(props.question._creationTime));
         return date.toDateString()
+    }
+
+    const handleQuestionView = ()=>{
+        navigate(`/question/${props.question._id}`,{state: {question: props.question}});
+    } 
+    const navigateToComments = ()=>{
+        navigate(`/question/${props.question._id}#comments`,{state: {question: props.question}});
     }
   return (
     <Box
@@ -35,7 +44,7 @@ function QuestionCard(props:cardProps) {
         </HStack>
 
         {/* Post Title */}
-        <Text fontWeight="bold" style={{cursor: 'pointer'}} onClick={()=>{console.log(props.question)}} textAlign='left' className='press-start-2p-regular' fontSize="xl" mb={4}>
+        <Text fontWeight="bold" style={{cursor: 'pointer'}} onClick={handleQuestionView} textAlign='left' className='press-start-2p-regular' fontSize="xl" mb={4}>
             {props.question.title}
         </Text>
         {/* Hashtags */}
@@ -63,7 +72,7 @@ function QuestionCard(props:cardProps) {
             </HStack>
         </HStack>
         <Box className="border-t border-gray-200 pt-4">
-            <Button variant="link" colorScheme="blue" mt={4}>
+            <Button variant="link" colorScheme="blue" mt={4} onClick={navigateToComments}>
                 See all comments
             </Button>
         </Box>
