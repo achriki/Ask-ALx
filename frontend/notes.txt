@@ -1,0 +1,9 @@
+Rotes: 
+    - Profile
+    - Settings
+    - Feed
+    - Question
+    - Tags
+    - Saves
+    - users (optional)
+
