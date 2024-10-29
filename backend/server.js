@@ -8,7 +8,6 @@ dotenv.config();
 
 const port = process.env.PORT || 8080;
 import routerController from './routes';
-import questionController from "./controllers/questionsController"
 
 // set up express server middlewares
 const app = express();

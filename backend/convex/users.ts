@@ -1,6 +1,7 @@
 import { internalMutation, query, QueryCtx, mutation } from "./_generated/server";
 import { UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
+import { savedBy } from "./questions";
 
 export const current = query({
   args: {},
@@ -8,6 +9,13 @@ export const current = query({
     return await getCurrentUser(ctx);
   },
 });
+
+export const getAllUsers = query({
+  args:{},
+  handler:async (ctx)=>{
+    return await ctx.db.query('comments').collect()
+  }
+})
 
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
@@ -50,8 +58,9 @@ export const saveQuestion = mutation({
   handler: async(ctx, args) =>{
     const {externalId, _id} = args
     const user = await userByExternalId(ctx, externalId)
-    const currentSavedQuestions = user?.savedQuestion || []; 
+    const currentSavedQuestions = user?.savedQuestion || []
     if(user) await ctx.db.patch(user?._id, {savedQuestion: [...currentSavedQuestions, _id] || undefined } )
+    await savedBy(ctx, {_id, userId: externalId})
   }
 }) 
 
@@ -72,7 +81,7 @@ export async function getCurrentUser(ctx: QueryCtx) {
   return await userByExternalId(ctx, identity?.subject);
 }
 
-async function userByExternalId(ctx: QueryCtx, externalId: string) {
+export async function userByExternalId(ctx: QueryCtx, externalId: string) {
   return await ctx.db
     .query("users")
     .withIndex("byExternalId", (q) => q.eq("externalId", externalId))

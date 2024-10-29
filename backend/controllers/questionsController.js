@@ -68,14 +68,14 @@ class questionController {
 
     static async LikeQuestion(req, res){
         try{
-            const { _id } = req.body
+            const { _id, userId } = req.body
             console.log('_id: ', _id)
             if(!_id){
                 throw new Error("Can't get current question _id")
             }
             
             await client.mutation(api.questions.LikeCountUpdate, {
-                _id
+                _id, userId
             })
 
             res.status(200).send('question data updated')
@@ -88,10 +88,10 @@ class questionController {
 
     static async DislikeQuestion(req, res){
         try{
-            const { _id } = req.body
+            const { _id, userId } = req.body
             console.log('_id: ', _id)
             await client.mutation(api.questions.DislikeCountUpdate, {
-                _id
+                _id, userId
             })
             res.status(200).send('question data updated')
         }catch(err){

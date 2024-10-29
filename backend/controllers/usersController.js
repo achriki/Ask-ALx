@@ -50,6 +50,27 @@ class usersController{
             }
         }
     }
+
+    static async getSavedQuestion(req, res){
+        try{
+            const {userId} = req.body
+            if(!userId){
+                throw new Error("user id invalid")
+            }
+            const questions = await client.query(api.questions.getUserSavedQuestions, {
+                userId: userId
+            })
+
+            if(questions.length === 0){
+                res.status(400).send('question not found')
+            }
+            res.status(200).json({savedQuestion: questions})
+        }catch(err){
+            if(err){
+                console.log(err.message)
+            }
+        }
+    }
 }
 
 export default usersController

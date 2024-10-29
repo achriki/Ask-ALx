@@ -72,7 +72,9 @@ const routerController = (app) => {
         await usersController.getUserQuestions(req, res)
     })
 
-
+    router.post('/savedQ', async(req, res)=>{
+        await usersController.getSavedQuestion(req, res)
+    })
 }
 
 export default routerController

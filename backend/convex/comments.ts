@@ -8,8 +8,8 @@ const commentObject = {
     publisherId: v.string(),
     username:v.string(),
     userImage:v.string(),
-    likeCount:v.number(),
-    dislikeCount: v.number(),
+    likedBy: v.optional(v.array(v.string())),
+    dislikedBy: v.optional(v.array(v.string())),
     questionId: v.id('questions')
 }
 
@@ -35,22 +35,35 @@ export const pushComment = mutation({
 })
 
 export const LikeCountUpdate = mutation({
-    args:{_id:v.id('comments')},
+    args:{_id:v.id('comments'), userId:v.string()},
     handler: async (ctx, args)=>{
-        const {_id} = args;
+        const {_id, userId} = args;
         const comment = await ctx.db.get(_id)
         console.log("comment object: ", comment)
-        await ctx.db.patch(_id, {likeCount: (comment?.likeCount || 0) + 1} )
+        const index = comment?.dislikedBy?.indexOf(userId) || -1
+        let dislikeListUpdate:any = []
+        if(index !== -1){
+           dislikeListUpdate =  comment?.dislikedBy?.splice(index, 1) || comment?.dislikedBy
+        }
+        
+        const currentLikeList = comment?.likedBy || []
+        await ctx.db.patch(_id, {likedBy: [...currentLikeList, userId], dislikedBy: dislikeListUpdate} )
 
     }    
 })
 
 export const DislikeCountUpdate = mutation({
-    args:{_id:v.id('comments')},
+    args:{_id:v.id('comments'), userId:v.string()},
     handler: async (ctx, args)=>{
-        const {_id} = args;
+        const {_id, userId} = args;
         const comment = await ctx.db.get(_id)
-        await ctx.db.patch(_id, {dislikeCount: (comment?.dislikeCount || 0) + 1} )
+        const index = comment?.likedBy?.indexOf(userId) || -1
+        let likedListUpdate: any= []
 
+        if(index !== -1){
+            likedListUpdate = comment?.likedBy?.splice(index, 1) || comment?.likedBy
+        }
+        const currentDislikeList = comment?.dislikedBy || []
+        await ctx.db.patch(_id, {dislikedBy: [...currentDislikeList, userId], likedBy: likedListUpdate} )
     }    
 })

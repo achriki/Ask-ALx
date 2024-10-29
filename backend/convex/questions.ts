@@ -1,6 +1,6 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { getCurrentUserOrThrow } from "./users";
+import { getCurrentUserOrThrow, userByExternalId } from "./users";
 import { query } from "./_generated/server";
 
 
@@ -10,9 +10,10 @@ const questionType = {
     publisherId:v.string(),
     username:v.string(),
     userImage:v.string(),
-    likeCount: v.number(),
-    dislikeCount: v.number(),
-    tags: v.optional(v.array(v.string()))
+    likedBy: v.optional(v.array(v.string())),
+    dislikedBy: v.optional(v.array(v.string())),
+    tags: v.optional(v.array(v.string())),
+    savedBy: v.optional(v.array(v.string()))
 }
 
 export const getCurrentQuestion = query({
@@ -45,6 +46,26 @@ export const getTagQuestions = query({
     }
 })
 
+export const getUserSavedQuestions = query({
+    args:{userId:v.string()},
+    handler: async(ctx, args)=>{
+        const questionList = await ctx.db.query('questions').collect()
+        const userInfos = await ctx.db.query('users').withIndex("byExternalId", (q)=>q.eq("externalId", args.userId)).unique()
+        const questions:any = []
+        const savedQuestions = userInfos?.savedQuestion || []
+        if(!savedQuestions){
+            return questions
+        }
+
+        questionList.map((question)=>{
+            if(savedQuestions.includes(question._id)){
+                questions.push(question)
+            }
+        })
+
+        return questions
+    }
+})
 export const getUserQuestions = query({
     args:{publisherId:v.string()},
     handler: async (ctx, args)=>{
@@ -99,22 +120,45 @@ export const deleteQuestion = mutation({
 })
 
 export const LikeCountUpdate = mutation({
-    args:{_id:v.id('questions')},
+    args:{_id:v.id('questions'), userId:v.string()},
     handler: async (ctx, args)=>{
-        const {_id} = args;
+        const {_id, userId} = args;
         const question = await ctx.db.get(_id)
         console.log("question object: ", question)
-        await ctx.db.patch(_id, {likeCount: (question?.likeCount || 0) + 1} )
-
+        const index = question?.dislikedBy?.indexOf(userId) || -1
+        let dislikeListUpdate:any = [] 
+        if(index !== -1){
+            dislikeListUpdate = question?.dislikedBy?.splice(index, 1) || question?.dislikedBy
+        }
+        const currentLikeList = question?.likedBy || []
+        await ctx.db.patch(_id, {likedBy: [...currentLikeList, userId], dislikedBy: dislikeListUpdate } )
     }    
 })
 
-export const DislikeCountUpdate = mutation({
-    args:{_id:v.id('questions')},
-    handler: async (ctx, args)=>{
-        const {_id} = args;
-        const question = await ctx.db.get(_id)
-        await ctx.db.patch(_id, {dislikeCount: (question?.dislikeCount || 0) + 1} )
+export const savedBy = mutation({
+    args:{_id:v.id('questions'), userId: v.string()},
+    handler: async(ctx, args)=>{
+        const question = await ctx.db.get(args._id)
+        const currentSavedBy = question?.savedBy || []
+    
+        if(question) await ctx.db.patch(args._id, {savedBy: [...currentSavedBy, args.userId] || undefined } )
+    }
+})
 
+export const DislikeCountUpdate = mutation({
+    args:{_id:v.id('questions'), userId: v.string()},
+    handler: async (ctx, args)=>{
+        const {_id, userId} = args;
+        const question = await ctx.db.get(_id)
+        const index = question?.likedBy?.indexOf(userId) || -1
+        // console.log('index: ', index)
+        let likedListUpdate: any= []
+
+        if(index !== -1){
+            likedListUpdate = question?.likedBy?.splice(index, 1) || question?.likedBy
+        }
+
+        const currentDislikeList = question?.dislikedBy || []
+        await ctx.db.patch(_id, {dislikedBy: [...currentDislikeList, userId], likedBy: likedListUpdate} )
     }    
 })

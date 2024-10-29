@@ -49,13 +49,15 @@ class commentsController {
 
     static async LikeComment(req, res){
         try{
-            const { _id } = req.body
+            const { _id, userId } = req.body
             console.log('_id: ', _id)
             if(!_id){
                 throw new Error("Can't get current question _id")
             }
+            
+            
             await client.mutation(api.comments.LikeCountUpdate, {
-                _id
+                _id, userId
             })
 
             res.status(200).send('comment data updated')
@@ -68,10 +70,10 @@ class commentsController {
 
     static async DislikeComment(req, res){
         try{
-            const { _id } = req.body
+            const { _id, userId } = req.body
             console.log('_id: ', _id)
             await client.mutation(api.comments.DislikeCountUpdate, {
-                _id
+                _id, userId
             })
             res.status(200).send('comment data updated')
         }catch(err){

@@ -16,9 +16,10 @@ export const QuestionsSchema = {
     publisherId: v.string(),
     username:v.string(),
     userImage:v.string(),
-    likeCount: v.number(),
-    dislikeCount: v.number(),
+    likedBy: v.optional(v.array(v.string())),
+    dislikedBy: v.optional(v.array(v.string())),
     tags: v.optional(v.array(v.string())),
+    savedBy: v.optional(v.array(v.string()))
 }
 
 export const TagsSchema = {
@@ -32,8 +33,8 @@ export const commentSchema = {
     publisherId: v.string(),
     username:v.string(),
     userImage:v.string(),
-    likeCount:v.number(),
-    dislikeCount: v.number(),
+    likedBy: v.optional(v.array(v.string())),
+    dislikedBy: v.optional(v.array(v.string())),
     questionId: v.id('questions')
 }
 
